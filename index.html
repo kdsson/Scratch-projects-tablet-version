@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scratch Ask and Wait in HTML</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px;
+        }
+        /* Style to mimic the classic Scratch prompt box */
+        #scratch-ask-container {
+            display: none; /* Hidden by default */
+            background: white;
+            border: 2px solid #4c97ff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+        #ask-text {
+            margin-top: 0;
+            font-weight: bold;
+            color: #575e75;
+        }
+        #input-row {
+            display: flex;
+            gap: 10px;
+        }
+        #answer-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #submit-btn {
+            background: #4c97ff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #submit-btn:hover {
+            background: #3381e6;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #222;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="start-btn" style="padding: 10px 20px; font-size: 16px; margin-bottom: 20px;">
+        Click to Start Program (Green Flag)
+    </button>
+
+
+    <div id="scratch-ask-container">
+        <p id="ask-text">Question goes here</p>
+        <div id="input-row">
+            <input type="text" id="answer-input" autocomplete="off">
+            <button id="submit-btn">✔</button>
+        </div>
+    </div>
+
+    <div id="output"></div>
+
+    <script>
+        let currentAnswer = "";
+
+        const askContainer = document.getElementById('scratch-ask-container');
+        const askText = document.getElementById('ask-text');
+        const answerInput = document.getElementById('answer-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const startBtn = document.getElementById('start-btn');
+        const outputDiv = document.getElementById('output');
+
+        function askAndWait(question) {
+            return new Promise((resolve) => {
+                askText.textContent = question;
+                answerInput.value = "";
+                askContainer.style.display = "block";
+                answerInput.focus();
+
+                function handleSubmit() {
+                    const value = answerInput.value;
+                    
+                    submitBtn.removeEventListener('click', handleSubmit);
+                    answerInput.removeEventListener('keypress', handleKeyPress);
+                    
+                    askContainer.style.display = "none";
+                    
+                    currentAnswer = value;
+                    resolve(value);
+                }
+
+                function handleKeyPress(e) {
+                    if (e.key === 'Enter') {
+                        handleSubmit();
+                    }
+                }
+
+                submitBtn.addEventListener('click', handleSubmit);
+                answerInput.addEventListener('keypress', handleKeyPress);
+            });
+        }
+
+        async function runProgram() {
+            outputDiv.textContent = "Program started...";
+            
+            await askAndWait("What is your name?");
+            outputDiv.textContent = `Hello, ${currentAnswer}!`;
+
+          )
+            await new Promise(r => setTimeout(r, 2000));
+
+            await askAndWait("What is your favorite color?");
+            outputDiv.textContent = `${currentAnswer} is a great color!`;
+        }
+      
+        startBtn.addEventListener('click', runProgram);
+    </script>
+</body>
+  </html>
+  
